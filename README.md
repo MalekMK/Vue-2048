@@ -9,6 +9,13 @@ This application is a 2048 game where player merges tiles together to create til
 yarn install
 ```
 
+### Run the node server
+
+```
+cd ./src
+nodemon express.js
+```
+
 ### Compiles and hot-reloads for development
 ```
 yarn run serve
