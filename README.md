@@ -1,4 +1,8 @@
-# 2048
+# Vue-2048
+
+## Description
+
+This application is a 2048 game where player merges tiles together to create tile 2048 to win.
 
 ## Project setup
 ```
@@ -20,10 +24,6 @@ yarn run build
 yarn run test
 ```
 
-### Lints and fixes files
-```
-yarn run lint
-```
+## License
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+[MIT](http://opensource.org/licenses/MIT)
