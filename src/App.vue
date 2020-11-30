@@ -10,7 +10,6 @@
 <script>
 import Game from "./components/game";
 import Dashboard from "./components/dashboard";
-import { importDeclaration } from "babel-types";
 
 export default {
   name: "app",

@@ -23,10 +23,8 @@
 </template>
 
 <script>
-// var el = document.getElementById("outside");
-// el.addEventListener("keyup", changeScore, false);
-
-// import { numberTypeAnnotation } from "babel-types";
+import io from "socket.io-client";
+const socket = io('http://localhost:3500');
 export default {
   name: "dashboard",
   props: ["gridLength","score"],
@@ -50,13 +48,10 @@ export default {
   },
   methods: {
     changeScore(){
-      let socket = io.connect('http://localhost:3000');
       // Listen for events
-      socket.on('scoreChange', function(data){
-        window.tempUser=data
+      socket.on('scoreChange', (data) => {
+        this.user.score=data.score
       });
-      // this.user=window.tempUser
-      this.user.score=window.tempUser.score
       this.controlLength(this.displayPlayers)
     },
     changeDisplay() {
@@ -68,7 +63,7 @@ export default {
       }
     },
     load() {
-      fetch("http://localhost:3000/")
+      fetch("http://localhost:3500/")
         .then(response => {
           return response.json();
         })
@@ -76,7 +71,7 @@ export default {
           this.players = json;
           this.changeDisplay();
         })
-        .catch(error => console.error(error));
+        .catch(error => {throw error});
     },
     sortedPlayers(players) {
       return players.concat().sort((a, b) => {

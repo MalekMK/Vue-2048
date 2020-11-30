@@ -64,17 +64,13 @@
 
 <script>
 import CellTab from "./cell";
+import io from "socket.io-client";
 const axios = require("axios");
+
 export default {
   name: "game",
   watch: {
     score(){
-      let socket = io.connect('http://localhost:3000');
-      socket.emit('scoreChange', {
-      name: this.username,
-      score: this.score,
-      gridLength: this.gridLength
-      });
       this.$emit("scoreChanged", this.score);
     },
     gridLength() {
@@ -93,18 +89,22 @@ export default {
     this.$emit("gridChange", this.gridLength);
   },
   methods: {
+    sendSocket(username,score,gridLength){
+      const socket = io('http://localhost:3500');
+      socket.emit('changingScore', {username,score,gridLength});
+    },
     submit() {
       axios
-        .post("http://localhost:3000/", {
+        .post("http://localhost:3500/", {
           name: this.name,
           score: this.score,
           gridSize: this.gridLength
         })
         .then(function(response) {
-          console.log(response);
+          throw response;
         })
         .catch(function(error) {
-          console.log(error);
+          throw error;
         });
       location.reload();
     },
@@ -195,7 +195,7 @@ export default {
     },
     keypressed(event) {
         switch (event.key) {
-        case "ArrowUp":
+        case "ArrowUp":{
           let initialPositionUp = this.initialTabPositionUp();
           let positionTabUp = new Array(this.gridLength).fill(0);
           let valueTabUp = new Array(this.gridLength).fill(0);
@@ -208,6 +208,7 @@ export default {
                   modifiedUp = true;
                   found.val = 2 * valueTabUp[x];
                   this.score += found.val;
+                  this.sendSocket(this.username,this.score,this.gridLength)
                   let index = NaN;
                   this.cells.find((cell, i) => {
                     index = i;
@@ -232,8 +233,8 @@ export default {
           ) {
             this.cells.push(this.generateCell("up"));
           }
-          break;
-        case "ArrowDown":
+          break;}
+        case "ArrowDown":{
           let initialPositionDown = this.initialTabPositionDown();
           let positionTabDown = new Array(this.gridLength).fill(
             this.gridLength - 1
@@ -248,6 +249,7 @@ export default {
                   modifiedDown = true;
                   found.val = 2 * valueTabDown[x];
                   this.score += found.val;
+                  this.sendSocket(this.username,this.score,this.gridLength)
                   let index = NaN;
                   this.cells.find((cell, i) => {
                     index = i;
@@ -273,8 +275,8 @@ export default {
           ) {
             this.cells.push(this.generateCell("down"));
           }
-          break;
-        case "ArrowLeft":
+          break;}
+        case "ArrowLeft":{
           let initialPositionLeft = this.initialTabPositionLeft();
           let positionTabLeft = new Array(this.gridLength).fill(0);
           let valueTabLeft = new Array(this.gridLength).fill(0);
@@ -287,6 +289,7 @@ export default {
                   modifiedLeft = true;
                   found.val = 2 * valueTabLeft[y];
                   this.score += found.val;
+                  this.sendSocket(this.username,this.score,this.gridLength)
                   let index = NaN;
                   this.cells.find((cell, i) => {
                     index = i;
@@ -312,8 +315,8 @@ export default {
           ) {
             this.cells.push(this.generateCell("left"));
           }
-          break;
-        case "ArrowRight":
+          break;}
+        case "ArrowRight":{
           let initialPositionRight = this.initialTabPositionRight();
           let positionTabRight = new Array(this.gridLength).fill(
             this.gridLength - 1
@@ -328,6 +331,7 @@ export default {
                   modifiedRight = true;
                   found.val = 2 * valueTabRight[y];
                   this.score += found.val;
+                  this.sendSocket(this.username,this.score,this.gridLength)
                   let index = NaN;
                   this.cells.find((cell, i) => {
                     index = i;
@@ -353,7 +357,7 @@ export default {
           ) {
             this.cells.push(this.generateCell("right"));
           }
-          break;
+          break;}
       }
     },
     buttonClicked() {

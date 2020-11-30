@@ -1,16 +1,14 @@
 var socket = require("socket.io");
 var express = require("express");
+const http = require('http');
 var app = express();
+const cors = require('cors');
+const server = http.createServer(app);
 var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*");
-  next();
-});
-
-mongoose.connect("mongodb://localhost/test", { useNewUrlParser: true });
+app.use(cors());
+mongoose.connect("mongodb://localhost/vue2048", { useNewUrlParser: true });
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function() {
@@ -43,16 +41,13 @@ app.post("/", function(req, res) {
   res.send("ok");
 });
 
-let server= app.listen(3000);
 // Socket setup & pass server
 var io = socket(server);
 io.on("connection", socket => {
-  console.log("made socket connection", socket.id);
   // Handle chat event
-  socket.on("scoreChange", function(data) {
-    // console.log(data);
+  socket.on("changingScore", (data) => {
     io.sockets.emit("scoreChange", data);
   });
 });
 
-
+server.listen(3500,  () => console.log(`Server has started.`));
