@@ -10,10 +10,35 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(player,index) in controlLength(displayPlayers)" v-bind:key="player.id">
-            <td>{{index+1}}</td>
-            <td>{{player.name}}</td>
-            <td>{{player.score}}</td>
+          <tr
+            v-for="(player, index) in controlLength(displayPlayers)"
+            v-bind:key="player.id"
+          >
+            <td
+              v-if="player._id === user._id"
+              style="background-color: #42b983"
+            >
+              {{ index + 1 }}
+            </td>
+            <td v-else>{{ index + 1 }}</td>
+            <td
+              v-if="player._id === user._id"
+              style="background-color: #42b983"
+            >
+              {{ player.username }}
+            </td>
+            <td v-else>{{ player.username }}</td>
+            <td
+              v-if="player._id === user._id"
+              style="background-color: #42b983"
+            >
+              {{ player.score }}
+            </td>
+            <td v-else>{{ player.score }}</td>
+
+            <!-- <td>{{ index + 1 }}</td>
+            <td>{{ player.username }}</td>
+            <td>{{ player.score }}</td> -->
             <!-- <td>{{player.gridSize}}</td> -->
           </tr>
         </tbody>
@@ -24,35 +49,35 @@
 
 <script>
 import io from "socket.io-client";
-const socket = io('http://localhost:3500');
+const socket = io("http://localhost:3500");
 export default {
   name: "dashboard",
-  props: ["gridLength","score"],
+  props: ["gridLength", "score"],
   watch: {
     gridLength() {
       this.changeDisplay();
     },
     score() {
       this.changeScore();
-    }
+    },
   },
   data() {
     return {
       players: [],
       displayPlayers: [],
-      user:{id:500,name: "YOUR SCORE", score: 0,gridLength:3}
+      user: {},
     };
   },
   mounted() {
     this.load();
   },
   methods: {
-    changeScore(){
+    changeScore() {
       // Listen for events
-      socket.on('scoreChange', (data) => {
-        this.user.score=data.score
+      socket.on("scoreChange", (data) => {
+        this.user = data;
+        this.load();
       });
-      this.controlLength(this.displayPlayers)
     },
     changeDisplay() {
       this.displayPlayers = [];
@@ -64,30 +89,36 @@ export default {
     },
     load() {
       fetch("http://localhost:3500/")
-        .then(response => {
+        .then((response) => {
           return response.json();
         })
-        .then(json => {
+        .then((json) => {
           this.players = json;
           this.changeDisplay();
         })
-        .catch(error => {throw error});
+        .catch((error) => {
+          throw error;
+        });
     },
     sortedPlayers(players) {
       return players.concat().sort((a, b) => {
         return a.score > b.score ? -1 : 1;
       });
     },
-    controlLength(displayPlayers){
-      let tempTab=this.sortedPlayers(displayPlayers)
-      while(tempTab.length>10){
-        tempTab.pop()
+    controlLength(displayPlayers) {
+      let tempTab = this.sortedPlayers(displayPlayers);
+      while (tempTab.length > 10) {
+        tempTab.pop();
       }
-      tempTab.push(this.user)
-      tempTab=this.sortedPlayers(tempTab)
-      return tempTab
-    }
-  }
+      Object.keys(this.user).length === 0
+        ? null
+        : tempTab.some((elt) => elt._id === this.user._id)
+        ? null
+        : tempTab.push(this.user);
+      tempTab = this.sortedPlayers(tempTab);
+      return tempTab;
+    },
+  },
 };
 </script>
 

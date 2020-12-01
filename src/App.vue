@@ -1,8 +1,16 @@
 <template>
   <div id="app">
     <div class="left">
-      <Game style="padding-top:100px" v-on:scoreChanged="scoreChanged" v-on:gridChange="changeGridLength"></Game>
-      <Dashboard :score="score" :grid-length="gridLength" class="Dashboard"></Dashboard>
+      <Game
+        style="padding-top: 100px"
+        v-on:scoreChanged="scoreChanged"
+        v-on:gridChange="changeGridLength"
+      ></Game>
+      <Dashboard
+        :score="score"
+        :grid-length="gridLength"
+        class="Dashboard"
+      ></Dashboard>
     </div>
   </div>
 </template>
@@ -16,21 +24,21 @@ export default {
   data() {
     return {
       gridLength: NaN,
-      score:0
+      score: NaN,
     };
   },
   methods: {
-    scoreChanged(param){
-      this.score=param
+    scoreChanged(param) {
+      this.score = param;
     },
     changeGridLength(param) {
       this.gridLength = param;
-    }
+    },
   },
   components: {
     Game: Game,
-    Dashboard: Dashboard
-  }
+    Dashboard: Dashboard,
+  },
 };
 </script>
 
