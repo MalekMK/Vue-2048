@@ -3,6 +3,8 @@
 ## Description
 
 This application is a 2048 game where player merges tiles together to create tile 2048 to win.
+Build with care and love :heart: 
+
 
 ## Project setup
 ```
@@ -12,8 +14,7 @@ yarn install
 ### Run the node server
 
 ```
-cd ./src
-nodemon express.js
+nodemon ./src/express.js
 ```
 
 ### Compiles and hot-reloads for development
